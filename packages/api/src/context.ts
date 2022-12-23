@@ -1,14 +1,14 @@
-import { getServerSession, type Session } from "@acme/auth";
-import { prisma } from "@acme/db";
-import { type inferAsyncReturnType } from "@trpc/server";
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { type Session, getServerSession } from '@mesavip/auth'
+import { prisma } from '@mesavip/db'
+import { type inferAsyncReturnType } from '@trpc/server'
+import { type CreateNextContextOptions } from '@trpc/server/adapters/next'
 
 /**
  * Replace this with an object if you want to pass things to createContextInner
  */
 type CreateContextOptions = {
-  session: Session | null;
-};
+  session: Session | null
+}
 
 /** Use this helper for:
  *  - testing, where we dont have to Mock Next.js' req/res
@@ -19,19 +19,19 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
-  };
-};
+  }
+}
 
 /**
  * This is the actual context you'll use in your router
  * @link https://trpc.io/docs/context
  **/
 export const createContext = async (opts: CreateNextContextOptions) => {
-  const session = await getServerSession(opts);
+  const session = await getServerSession(opts)
 
   return await createContextInner({
     session,
-  });
-};
+  })
+}
 
-export type Context = inferAsyncReturnType<typeof createContext>;
+export type Context = inferAsyncReturnType<typeof createContext>

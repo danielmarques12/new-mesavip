@@ -41,15 +41,17 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String        @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?       @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @default(now()) @updatedAt
+    created_at    DateTime      @default(now())
+    updated_at    DateTime      @default(now()) @updatedAt
+    Rate          Rate[]
+    Reservation   Reservation[]
 }
 
 model VerificationToken {
@@ -58,4 +60,85 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Restaurant {
+    id           String   @id @default(cuid())
+    name         String   @db.TinyText
+    about        String   @db.VarChar(1000)
+    phone        String   @db.VarChar(20)
+    website      String   @db.TinyText
+    total_tables Int      @db.UnsignedTinyInt
+    opening_hour DateTime
+    closing_hour DateTime
+    created_at   DateTime @default(now())
+    updated_at   DateTime @default(now()) @updatedAt
+
+    cuisine    Cuisine @relation(fields: [cuisine_id], references: [id])
+    cuisine_id String  @unique
+
+    Address     Address[]
+    Rate        Rate[]
+    Reservation Reservation[]
+
+    @@index([cuisine_id])
+}
+
+model Cuisine {
+    id         String   @id @default(cuid())
+    name       String   @db.TinyText
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
+    Restaurant Restaurant[]
+}
+
+model Address {
+    id           String   @id @default(cuid())
+    address_line String   @db.TinyText
+    zipcode      String   @db.VarChar(10)
+    city         String   @db.TinyText
+    state        String   @db.TinyText
+    country      String   @db.TinyText
+    created_at   DateTime @default(now())
+    updated_at   DateTime @default(now()) @updatedAt
+
+    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
+    restaurant_id String
+
+    @@index([restaurant_id])
+}
+
+model Rate {
+    id         String   @id @default(cuid())
+    rating     Int      @db.UnsignedTinyInt
+    comment    String   @db.VarChar(1000)
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
+    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
+    restaurant_id String
+
+    user    User   @relation(fields: [user_id], references: [id])
+    user_id String
+
+    @@index([restaurant_id])
+    @@index([user_id])
+}
+
+model Reservation {
+    id         String   @id @default(cuid())
+    date       DateTime
+    canceled   Boolean?
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+
+    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
+    restaurant_id String
+
+    user    User   @relation(fields: [user_id], references: [id])
+    user_id String
+
+    @@index([restaurant_id])
+    @@index([user_id])
 }

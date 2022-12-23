@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "presentation": {
+    "echo": false,
+    "reveal": "always",
+    "focus": false,
+    "panel": "dedicated",
+    "showReuseMessage": true
+  },
+  "tasks": [
+    {
+      "label": "Launch Mesavip Development terminals",
+      "dependsOn": ["mesavip", "pscale(3306)", "Prisma Studio(5555)"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "mesavip",
+      "type": "shell",
+      "command": "pnpm dev",
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "pscale(3306)",
+      "type": "shell",
+      "command": "pscale connect mesavip dev",
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "Prisma Studio(5555)",
+      "type": "shell",
+      "command": "cd packages/db && pnpm prisma-studio",
+      "isBackground": false,
+      "problemMatcher": []
+    }
+  ]
+}

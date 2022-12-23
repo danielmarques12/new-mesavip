@@ -1,5 +1,8 @@
 {
   "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "src"
+  },
   "exclude": [],
   "include": [
     "next-env.d.ts",
