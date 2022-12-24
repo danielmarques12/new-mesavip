@@ -4,6 +4,6 @@ import { publicProcedure, router } from '../trpc'
 
 export const postRouter = router({
   all: publicProcedure.query(({ ctx }) => {
-    return 'idkqwdqd'
+    return 'Prisma test --- It is working!!!'
   }),
 })

@@ -1,23 +1,28 @@
-import { prisma } from '@mesavip/db'
+import { Restaurant, prisma } from '@mesavip/db'
 import type { GetServerSideProps, NextPage } from 'next'
 import { signIn, signOut } from 'next-auth/react'
 import Head from 'next/head'
 import { trpc } from 'utils/trpc'
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  // await prisma.user.update({
-  //   where: {
-  //     email: "daniel.brz2009@gmail.com",
-  //   },
-  //   data: {
-  //     name: "uyuhu",
-  //   },
-  // });
+  const cuisines = await prisma.$queryRaw<
+    Array<Restaurant & { total: string }>
+  >`
+    SELECT DISTINCT
+    cuisine,
+    (
+      SELECT COUNT(r2.id)
+      FROM Restaurant r2
+      WHERE r2.cuisine = r.cuisine
+    ) AS total
+    FROM Restaurant r
+    GROUP BY id
+  `
+
+  // cuisines.forEach(({ total }) => console.log(total))
 
   return {
-    props: {
-      idk: `######################################################`,
-    },
+    props: {},
   }
 }
 
