@@ -5,21 +5,44 @@ import Head from 'next/head'
 import { trpc } from 'utils/trpc'
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const cuisines = await prisma.$queryRaw<
-    Array<Restaurant & { total: string }>
-  >`
-    SELECT DISTINCT
-    cuisine,
-    (
-      SELECT COUNT(r2.id)
-      FROM Restaurant r2
-      WHERE r2.cuisine = r.cuisine
-    ) AS total
-    FROM Restaurant r
-    GROUP BY id
-  `
+  const getCuisines = async () => {
+    const cuisines = await prisma.$queryRaw<
+      Array<Restaurant & { total: string }>
+    >`
+      SELECT DISTINCT
+      cuisine,
+      (
+        SELECT COUNT(r2.id)
+        FROM Restaurant r2
+        WHERE r2.cuisine = r.cuisine
+      ) AS total
+      FROM Restaurant r
+      GROUP BY id
+    `
 
-  // cuisines.forEach(({ total }) => console.log(total))
+    // cuisines.forEach(({ total }) => console.log(total))
+  }
+
+  const createReservation = async () => {
+    const totalTables = await prisma.restaurant.findFirst({
+      where: {
+        id: 'seed-clc0z7293000e20if30e4a7rv',
+      },
+      select: {
+        total_tables: true,
+      },
+    })
+
+    return { totalTables }
+  }
+
+  const { totalTables } = await createReservation()
+
+  console.log('#######################################')
+  console.log('#######################################')
+  console.log(totalTables)
+  console.log('#######################################')
+  console.log('#######################################')
 
   return {
     props: {},
