@@ -71,7 +71,29 @@ export const getServerSideProps: GetServerSideProps = async () => {
     console.log('#######################################')
   }
 
-  await createReservation()
+  // await createReservation()
+
+  const cancelReservation = async () => {
+    await prisma.reservation
+      .findFirstOrThrow({
+        where: {
+          id: 'clc8mzmdc0001iflxmfnwjabe',
+        },
+      })
+      .then(async (reservation) => {
+        await prisma.reservation.update({
+          where: {
+            id: reservation.id,
+          },
+          data: {
+            canceled: true,
+          },
+        })
+      })
+      .catch(() => console.log('reservation not found!!!'))
+  }
+
+  // await cancelReservation()
 
   return {
     props: {},
