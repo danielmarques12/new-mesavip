@@ -33,16 +33,45 @@ export const getServerSideProps: GetServerSideProps = async () => {
       },
     })
 
-    return { totalTables }
+    const reservationOrder = {
+      client_id: 'seed-clc0zb91k000o8dif1f8xdnfw',
+      restaurant_id: 'seed-clc0z728x000020ifgs21holp',
+      date: '2022-12-23T20:48:12.722Z',
+    }
+
+    const reservations = await prisma.reservation.findMany({
+      where: {
+        restaurant_id: reservationOrder.restaurant_id,
+        date: reservationOrder.date,
+        canceled: null,
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    if (reservations.length === totalTables?.total_tables) {
+      return console.log('restaurant is full on this date and time!')
+    }
+
+    await prisma.reservation
+      .create({
+        data: {
+          restaurant_id: reservationOrder.restaurant_id,
+          date: reservationOrder.date,
+          user_id: reservationOrder.client_id,
+        },
+      })
+      .then(() => console.log('Reservation created successfully!!!'))
+
+    console.log('#######################################')
+    console.log('#######################################')
+    console.log({ totalTables, reservations })
+    console.log('#######################################')
+    console.log('#######################################')
   }
 
-  const { totalTables } = await createReservation()
-
-  console.log('#######################################')
-  console.log('#######################################')
-  console.log(totalTables)
-  console.log('#######################################')
-  console.log('#######################################')
+  await createReservation()
 
   return {
     props: {},
