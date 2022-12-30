@@ -76,6 +76,7 @@ model Restaurant {
 
     Address     Address[]
     Reservation Reservation[]
+    Rate        Rate[]
 }
 
 model Address {
@@ -104,7 +105,11 @@ model Rate {
     reservation    Reservation @relation(fields: [reservation_id], references: [id])
     reservation_id String
 
+    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
+    restaurant_id String
+
     @@index([reservation_id])
+    @@index([restaurant_id])
 }
 
 model Reservation {

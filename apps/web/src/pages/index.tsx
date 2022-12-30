@@ -1,5 +1,5 @@
-import { Restaurant, prisma } from '@mesavip/db'
-import type { GetServerSideProps, NextPage } from 'next'
+import { Reservation, Restaurant, prisma } from '@mesavip/db'
+import type { GetServerSideProps } from 'next'
 import { signIn, signOut } from 'next-auth/react'
 import Head from 'next/head'
 import { trpc } from 'utils/trpc'
@@ -7,7 +7,11 @@ import { trpc } from 'utils/trpc'
 export const getServerSideProps: GetServerSideProps = async () => {
   const getCuisines = async () => {
     const cuisines = await prisma.$queryRaw<
-      Array<Restaurant & { total: string }>
+      Array<
+        Restaurant & {
+          total?: string
+        }
+      >
     >`
       SELECT DISTINCT
       cuisine,
@@ -20,7 +24,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
       GROUP BY id
     `
 
-    // cuisines.forEach(({ total }) => console.log(total))
+    cuisines.forEach(({ total }) => console.log(total))
+  }
+
+  const reservationOrder = {
+    client_id: 'seed-clc0zb91k000o8dif1f8xdnfw',
+    restaurant_id: 'seed-clc0z728x000020ifgs21holp',
+    date: '2022-12-23T20:48:12.722Z',
   }
 
   const createReservation = async () => {
@@ -32,12 +42,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
         total_tables: true,
       },
     })
-
-    const reservationOrder = {
-      client_id: 'seed-clc0zb91k000o8dif1f8xdnfw',
-      restaurant_id: 'seed-clc0z728x000020ifgs21holp',
-      date: '2022-12-23T20:48:12.722Z',
-    }
 
     const reservations = await prisma.reservation.findMany({
       where: {
@@ -95,12 +99,50 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   // await cancelReservation()
 
+  const listPastReservations = async () => {
+    const pastReservations = await prisma.$queryRaw<
+      Array<Reservation & { restaurant: Restaurant }>
+    >`
+      SELECT r.id,
+        r.canceled,
+        r.date,
+        JSON_OBJECT(
+                'id', Restaurant.id,
+                'name', Restaurant.name,
+                'avg_rating', (
+                  SELECT ROUND(avg(Rat.rating), 1)
+                  FROM Restaurant Res
+                           INNER JOIN Rate Rat on Res.id = Rat.restaurant_id
+                  WHERE Res.id = Restaurant.id
+                ),
+                'address', JSON_OBJECT(
+                        'address_line', a.address_line,
+                        'city', a.city,
+                        'state', a.state
+                    )
+            ) as restaurant
+      FROM Reservation r
+              INNER JOIN User u on u.id = r.user_id
+              INNER JOIN Restaurant on Restaurant.id = r.restaurant_id
+              INNER JOIN Address a on Restaurant.id = a.restaurant_id
+              INNER JOIN Rate on r.id = Rate.reservation_id
+      WHERE u.id = 'seed-clc0zb1wf00020qifd2j38utw'
+        AND r.date < now()
+      GROUP BY Restaurant.id, r.id, a.id, r.date
+      ORDER BY r.date;
+  `
+
+    console.log(pastReservations[2])
+  }
+
+  await listPastReservations()
+
   return {
     props: {},
   }
 }
 
-const Home: NextPage = () => {
+export default function Home() {
   const postQuery = trpc.post.all.useQuery()
 
   return (
@@ -129,8 +171,6 @@ const Home: NextPage = () => {
     </>
   )
 }
-
-export default Home
 
 const AuthShowcase: React.FC = () => {
   const { data: session } = trpc.auth.getSession.useQuery()

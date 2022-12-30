@@ -42,6 +42,7 @@ const getReservations = async () => {
     },
     select: {
       id: true,
+      restaurant_id: true,
     },
   })
 
@@ -178,6 +179,11 @@ const seedRatings = async () => {
             id: reservation.id,
           },
         },
+        restaurant: {
+          connect: {
+            id: reservation.restaurant_id,
+          },
+        },
       },
     })
   })
@@ -205,12 +211,12 @@ const seedAddresses = async () => {
   })
 }
 
-const seed = () => {
-  seedUsers()
-  seedRestaurants()
-  seedReservations()
+const seed = async () => {
+  // seedUsers()
+  // seedRestaurants()
+  // seedReservations()
   seedRatings()
-  seedAddresses()
+  // seedAddresses()
 }
 
 seed()
