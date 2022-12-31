@@ -1,4 +1,4 @@
-import { Reservation, Restaurant, prisma } from '@mesavip/db'
+import { Address, Reservation, Restaurant, prisma } from '@mesavip/db'
 import type { GetServerSideProps } from 'next'
 import { signIn, signOut } from 'next-auth/react'
 import Head from 'next/head'
@@ -47,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       where: {
         restaurant_id: reservationOrder.restaurant_id,
         date: reservationOrder.date,
-        canceled: null,
+        canceled: false,
       },
       select: {
         id: true,
@@ -99,35 +99,46 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   // await cancelReservation()
 
+  type PastReservation = Reservation & {
+    restaurant: Restaurant & { address: Address }
+    formated_date: {
+      day: string
+      month: string
+      time: string
+    }
+  }
+
   const listPastReservations = async () => {
-    const pastReservations = await prisma.$queryRaw<
-      Array<Reservation & { restaurant: Restaurant }>
-    >`
+    const pastReservations = await prisma.$queryRaw<PastReservation[]>`
       SELECT r.id,
-        r.canceled,
-        r.date,
-        JSON_OBJECT(
-                'id', Restaurant.id,
-                'name', Restaurant.name,
-                'avg_rating', (
+      r.canceled,
+      JSON_OBJECT(
+              'day', DATE_FORMAT(r.date, '%d'),
+              'month', DATE_FORMAT(r.date, '%b'),
+              'time', TIME_FORMAT(r.date, '%H:%i %p')
+          ) as formated_date,
+      JSON_OBJECT(
+              'id', Restaurant.id,
+              'name', Restaurant.name,
+              'avg_rating', (
                   SELECT ROUND(avg(Rat.rating), 1)
                   FROM Restaurant Res
-                           INNER JOIN Rate Rat on Res.id = Rat.restaurant_id
+                          INNER JOIN Rate Rat on Res.id = Rat.restaurant_id
                   WHERE Res.id = Restaurant.id
-                ),
-                'address', JSON_OBJECT(
-                        'address_line', a.address_line,
-                        'city', a.city,
-                        'state', a.state
-                    )
-            ) as restaurant
+              ),
+              'address', JSON_OBJECT(
+                      'address_line', a.address_line,
+                      'city', a.city,
+                      'state', a.state
+                  )
+          ) as restaurant
       FROM Reservation r
-              INNER JOIN User u on u.id = r.user_id
-              INNER JOIN Restaurant on Restaurant.id = r.restaurant_id
-              INNER JOIN Address a on Restaurant.id = a.restaurant_id
-              INNER JOIN Rate on r.id = Rate.reservation_id
+            INNER JOIN User u on u.id = r.user_id
+            INNER JOIN Restaurant on Restaurant.id = r.restaurant_id
+            INNER JOIN Address a on Restaurant.id = a.restaurant_id
+            INNER JOIN Rate on r.id = Rate.reservation_id
       WHERE u.id = 'seed-clc0zb1wf00020qifd2j38utw'
-        AND r.date < now()
+      AND r.date < now()
       GROUP BY Restaurant.id, r.id, a.id, r.date
       ORDER BY r.date;
   `

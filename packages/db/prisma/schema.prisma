@@ -115,7 +115,8 @@ model Rate {
 model Reservation {
     id         String   @id @default(cuid())
     date       DateTime
-    canceled   Boolean?
+    canceled   Boolean  @default(false)
+    rated      Boolean  @default(false)
     created_at DateTime @default(now())
     updated_at DateTime @default(now()) @updatedAt
 
