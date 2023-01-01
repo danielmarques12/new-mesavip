@@ -192,15 +192,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
     comment: string
     rating: number
     published_date: string
-    client_name: string
+    customer_name?: string
   }
 
-  const listRestaurantReviews = async () => {
+  const listReviews = async () => {
     const reviews = await prisma.$queryRaw<Review[]>`
       SELECT comment,
              rating,
              DATE_FORMAT(Rate.created_at, '%b %d, %Y') as published_date,
-             User.name                                 as client_name
+             User.name                                 as customer_name
       FROM Rate
                INNER JOIN User on Rate.user_id = User.id
       WHERE Rate.restaurant_id = ${reservationOrder.restaurant_id}
@@ -210,7 +210,22 @@ export const getServerSideProps: GetServerSideProps = async () => {
     console.log(reviews)
   }
 
-  await listRestaurantReviews()
+  const listSingleReview = async () => {
+    const reservationId = 'seed-clcbksz0g00004pif61l17uh1'
+
+    const review = await prisma.$queryRaw<Review>`
+      SELECT comment,
+            rating,
+            DATE_FORMAT(created_at, '%b %d, %Y') as published_date
+      FROM Rate
+      WHERE reservation_id = ${reservationId}
+    `
+
+    console.log(review)
+  }
+
+  // await listReviews()
+  // await listSingleReview()
 
   return {
     props: {},
