@@ -51,6 +51,7 @@ model User {
     created_at    DateTime      @default(now())
     updated_at    DateTime      @default(now()) @updatedAt
     Reservation   Reservation[]
+    Rate          Rate[]
 }
 
 model VerificationToken {
@@ -108,8 +109,12 @@ model Rate {
     restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
     restaurant_id String
 
+    user    User   @relation(fields: [user_id], references: [id])
+    user_id String
+
     @@index([reservation_id])
     @@index([restaurant_id])
+    @@index([user_id])
 }
 
 model Reservation {

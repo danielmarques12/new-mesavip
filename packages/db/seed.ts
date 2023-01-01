@@ -43,6 +43,7 @@ const getReservations = async () => {
     select: {
       id: true,
       restaurant_id: true,
+      user_id: true,
     },
   })
 
@@ -93,14 +94,14 @@ const getRandomCuisine = () => {
     'British',
     'Thai',
     'Chinese',
-    'Russian',
-    'Brazilian',
-    'German',
-    'French',
-    'Cuban',
-    'Indian',
-    'Pizza',
-    'Hamburger',
+    // 'Russian',
+    // 'Brazilian',
+    // 'German',
+    // 'French',
+    // 'Cuban',
+    // 'Indian',
+    // 'Pizza',
+    // 'Hamburger',
   ]
 
   return cuisines[Math.floor(Math.random() * cuisines.length)]
@@ -185,6 +186,11 @@ const seedRatings = async () => {
           restaurant: {
             connect: {
               id: reservation.restaurant_id,
+            },
+          },
+          user: {
+            connect: {
+              id: reservation.user_id,
             },
           },
         },
