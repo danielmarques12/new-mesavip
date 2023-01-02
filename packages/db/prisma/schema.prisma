@@ -51,7 +51,7 @@ model User {
     created_at    DateTime      @default(now())
     updated_at    DateTime      @default(now()) @updatedAt
     Reservation   Reservation[]
-    Rate          Rate[]
+    Review        Review[]
 }
 
 model VerificationToken {
@@ -75,9 +75,9 @@ model Restaurant {
     created_at   DateTime @default(now())
     updated_at   DateTime @default(now()) @updatedAt
 
-    Address     Address[]
+    Address     Address?
     Reservation Reservation[]
-    Rate        Rate[]
+    Review      Review[]
 }
 
 model Address {
@@ -91,12 +91,12 @@ model Address {
     updated_at   DateTime @default(now()) @updatedAt
 
     restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
-    restaurant_id String
+    restaurant_id String     @unique
 
     @@index([restaurant_id])
 }
 
-model Rate {
+model Review {
     id         String   @id @default(cuid())
     rating     Int      @db.UnsignedTinyInt
     comment    String   @db.VarChar(1000)
@@ -104,7 +104,7 @@ model Rate {
     updated_at DateTime @default(now()) @updatedAt
 
     reservation    Reservation @relation(fields: [reservation_id], references: [id])
-    reservation_id String
+    reservation_id String      @unique
 
     restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
     restaurant_id String
@@ -121,16 +121,16 @@ model Reservation {
     id         String   @id @default(cuid())
     date       DateTime
     canceled   Boolean  @default(false)
-    rated      Boolean  @default(false)
+    reviewed   Boolean  @default(false)
     created_at DateTime @default(now())
     updated_at DateTime @default(now()) @updatedAt
 
     restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
     restaurant_id String
 
-    user    User   @relation(fields: [user_id], references: [id])
+    user    User    @relation(fields: [user_id], references: [id])
     user_id String
-    Rate    Rate[]
+    Review  Review?
 
     @@index([restaurant_id])
     @@index([user_id])

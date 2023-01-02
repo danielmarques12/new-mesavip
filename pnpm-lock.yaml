@@ -27,6 +27,7 @@ importers:
 
   apps/web:
     specifiers:
+      '@js-temporal/polyfill': ^0.4.3
       '@mesavip/api': '*'
       '@mesavip/auth': '*'
       '@mesavip/db': '*'
@@ -53,6 +54,7 @@ importers:
       typescript: ^4.9.4
       zod: ^3.20.0
     dependencies:
+      '@js-temporal/polyfill': 0.4.3
       '@mesavip/api': link:../../packages/api
       '@mesavip/auth': link:../../packages/auth
       '@mesavip/db': link:../../packages/db
@@ -502,6 +504,14 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
+    dev: false
+
+  /@js-temporal/polyfill/0.4.3:
+    resolution: {integrity: sha512-6Fmjo/HlkyVCmJzAPnvtEWlcbQUSRhi8qlN9EtJA/wP7FqXsevLLrlojR44kzNzrRkpf7eDJ+z7b4xQD/Ycypw==}
+    engines: {node: '>=12'}
+    dependencies:
+      jsbi: 4.3.0
+      tslib: 2.4.0
     dev: false
 
   /@manypkg/cli/0.19.2:
@@ -2386,6 +2396,10 @@ packages:
     hasBin: true
     dependencies:
       argparse: 2.0.1
+
+  /jsbi/4.3.0:
+    resolution: {integrity: sha512-SnZNcinB4RIcnEyZqFPdGPVgrg2AcnykiBy0sHVJQKHYeaLUvi3Exj+iaPpLnFVkDPZIV4U0yvgC9/R4uEAZ9g==}
+    dev: false
 
   /jsesc/2.5.2:
     resolution: {integrity: sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==}

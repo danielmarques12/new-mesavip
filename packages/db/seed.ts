@@ -94,14 +94,14 @@ const getRandomCuisine = () => {
     'British',
     'Thai',
     'Chinese',
-    // 'Russian',
-    // 'Brazilian',
-    // 'German',
-    // 'French',
-    // 'Cuban',
-    // 'Indian',
-    // 'Pizza',
-    // 'Hamburger',
+    'Russian',
+    'Brazilian',
+    'German',
+    'French',
+    'Cuban',
+    'Indian',
+    'Pizza',
+    'Hamburger',
   ]
 
   return cuisines[Math.floor(Math.random() * cuisines.length)]
@@ -109,7 +109,7 @@ const getRandomCuisine = () => {
 
 const seedUsers = async () => {
   await prisma.user.createMany({
-    data: Array.from({ length: 10 }).map(
+    data: Array.from({ length: 5 }).map(
       (): Prisma.UserCreateInput => ({
         id: `seed-${cuid()}`,
         name: faker.name.fullName(),
@@ -151,7 +151,7 @@ const seedReservations = async () => {
           id: `seed-${cuid()}`,
           date: reservationDate,
           canceled: false,
-          rated: false,
+          reviewed: false,
           restaurant: {
             connect: {
               id: restaurant.id,
@@ -168,11 +168,11 @@ const seedReservations = async () => {
   })
 }
 
-const seedRatings = async () => {
+const seedReviews = async () => {
   const { reservations } = await getReservations()
 
   reservations.forEach(async (reservation) => {
-    await prisma.rate
+    await prisma.review
       .create({
         data: {
           id: `seed-${cuid()}`,
@@ -201,7 +201,7 @@ const seedRatings = async () => {
             id: reservation.id,
           },
           data: {
-            rated: true,
+            reviewed: true,
           },
         })
       })
@@ -230,15 +230,22 @@ const seedAddresses = async () => {
   })
 }
 
+const cleanTables = async () => {
+  await prisma.address.deleteMany()
+  await prisma.account.deleteMany()
+  await prisma.review.deleteMany()
+  await prisma.reservation.deleteMany()
+  await prisma.user.deleteMany()
+  await prisma.restaurant.deleteMany()
+}
+
 const seed = async () => {
   // await seedUsers()
   // await seedRestaurants()
-  // await seedReservations()
-  await seedRatings()
   // await seedAddresses()
-
-  // await prisma.rate.deleteMany()
-  // await prisma.reservation.deleteMany()
+  // await seedReservations()
+  await seedReviews()
+  // await cleanTables()
 }
 
 seed().then(async () => {

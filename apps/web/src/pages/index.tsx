@@ -1,3 +1,4 @@
+import { Temporal } from '@js-temporal/polyfill'
 import { Address, Reservation, Restaurant, prisma } from '@mesavip/db'
 import type { GetServerSideProps } from 'next'
 import { signIn, signOut } from 'next-auth/react'
@@ -28,9 +29,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 
   const reservationOrder = {
-    client_id: 'seed-clc0zb91k000o8dif1f8xdnfw',
-    restaurant_id: 'seed-clc0z728x000020ifgs21holp',
-    date: '2022-12-23T20:48:12.722Z',
+    customer_id: 'seed-clce5pwey0000kjif51ts05oh',
+    restaurant_id: 'seed-clce5pwor000akjifaf5z2ikm',
+    date: '2023-01-01T23:30:00.372Z',
   }
 
   const createReservation = async () => {
@@ -63,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         data: {
           restaurant_id: reservationOrder.restaurant_id,
           date: reservationOrder.date,
-          user_id: reservationOrder.client_id,
+          user_id: reservationOrder.customer_id,
         },
       })
       .then(() => console.log('Reservation created successfully!!!'))
@@ -112,7 +113,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     const pastReservations = await prisma.$queryRaw<PastReservation[]>`
       SELECT r.id,
       r.canceled,
-      r.rated,
+      r.reviewed,
       JSON_OBJECT(
               'day', DATE_FORMAT(r.date, '%d'),
               'month', DATE_FORMAT(r.date, '%b'),
@@ -124,7 +125,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
               'avg_rating', (
                   SELECT ROUND(avg(Rat.rating), 1)
                   FROM Restaurant Res
-                          INNER JOIN Rate Rat on Res.id = Rat.restaurant_id
+                          INNER JOIN Review Rev on Res.id = Rev.restaurant_id
                   WHERE Res.id = Restaurant.id
               ),
               'address', JSON_OBJECT(
@@ -137,7 +138,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
             INNER JOIN User u on u.id = r.user_id
             INNER JOIN Restaurant on Restaurant.id = r.restaurant_id
             INNER JOIN Address a on Restaurant.id = a.restaurant_id
-            INNER JOIN Rate on r.id = Rate.reservation_id
+            INNER JOIN Review on r.id = Review.reservation_id
       WHERE u.id = 'seed-clc0zb1wf00020qifd2j38utw'
       AND r.date < now()
       GROUP BY Restaurant.id, r.id, a.id, r.date
@@ -160,9 +161,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
               'id', Restaurant.id,
               'name', Restaurant.name,
               'avg_rating', (
-                  SELECT ROUND(avg(Rat.rating), 1)
+                  SELECT ROUND(avg(Rev.rating), 1)
                   FROM Restaurant Res
-                          INNER JOIN Rate Rat on Res.id = Rat.restaurant_id
+                          INNER JOIN Review Rev on Res.id = Rev.restaurant_id
                   WHERE Res.id = Restaurant.id
               ),
               'address', JSON_OBJECT(
@@ -175,7 +176,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
             INNER JOIN User u on u.id = r.user_id
             INNER JOIN Restaurant on Restaurant.id = r.restaurant_id
             INNER JOIN Address a on Restaurant.id = a.restaurant_id
-            INNER JOIN Rate on r.id = Rate.reservation_id
+            INNER JOIN Review on r.id = Review.reservation_id
       WHERE u.id = 'seed-clc0zb1wf00020qifd2j38utw'
       AND r.date > now()
       GROUP BY Restaurant.id, r.id, a.id, r.date
@@ -199,12 +200,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
     const reviews = await prisma.$queryRaw<Review[]>`
       SELECT comment,
              rating,
-             DATE_FORMAT(Rate.created_at, '%b %d, %Y') as published_date,
+             DATE_FORMAT(Review.created_at, '%b %d, %Y') as published_date,
              User.name                                 as customer_name
-      FROM Rate
-               INNER JOIN User on Rate.user_id = User.id
-      WHERE Rate.restaurant_id = ${reservationOrder.restaurant_id}
-      ORDER BY Rate.rating DESC
+      FROM Review
+               INNER JOIN User on Review.user_id = User.id
+      WHERE Review.restaurant_id = ${reservationOrder.restaurant_id}
+      ORDER BY Review.rating DESC
     `
 
     console.log(reviews)
@@ -217,7 +218,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       SELECT comment,
             rating,
             DATE_FORMAT(created_at, '%b %d, %Y') as published_date
-      FROM Rate
+      FROM Review
       WHERE reservation_id = ${reservationId}
     `
 
@@ -226,6 +227,51 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   // await listReviews()
   // await listSingleReview()
+
+  const createReview = async () => {
+    const reservationId = 'seed-clce5qf7x000ut6if2s2hbmg3'
+
+    const isReviewAvailableAlready = await prisma.$queryRaw<
+      Array<{ id: string }>
+    >`
+      SELECT id
+      FROM Reservation
+      WHERE id = ${reservationId}
+        AND canceled = false
+        AND DATE_ADD(date, INTERVAL 12 hour) < now()
+    `
+
+    if (!isReviewAvailableAlready.length) {
+      console.log(
+        'Customers can only review reservations after 12 hours have passed',
+      )
+    }
+
+    const review = {
+      user_id: reservationOrder.customer_id,
+      restaurant_id: reservationOrder.restaurant_id,
+      reservation_id: reservationId,
+      comment: 'yeah, very good!!!',
+      rating: 5,
+    }
+
+    await prisma.review
+      .create({
+        data: review,
+      })
+      .then(async () => {
+        await prisma.reservation.update({
+          where: {
+            id: review.reservation_id,
+          },
+          data: {
+            reviewed: true,
+          },
+        })
+      })
+  }
+
+  // await createReview()
 
   return {
     props: {},

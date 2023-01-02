@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@js-temporal/polyfill": "^0.4.3",
     "@mesavip/api": "*",
     "@mesavip/auth": "*",
     "@mesavip/db": "*",
