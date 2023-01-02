@@ -6,7 +6,7 @@ import Head from 'next/head'
 import { trpc } from 'utils/trpc'
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const getCuisines = async () => {
+  const listCuisines = async () => {
     const cuisines = await prisma.$queryRaw<
       Array<
         Restaurant & {
@@ -272,6 +272,60 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 
   // await createReview()
+
+  const listSingleRestaurant = async () => {
+    const restaurantId = 'seed-clce5pwor000akjifaf5z2ikm'
+
+    type Restaurant = {
+      id: string
+      name: string
+      about: string
+      phone: string
+      website: string
+      cuisine: string
+      opening_hour: string
+      closing_hour: string
+      total_reviews: number
+      avg_rating: number
+      address: {
+        address_line: string
+        zipcode: string
+        city: string
+        state: string
+      }
+    }
+
+    const restaurant = await prisma.$queryRaw<Restaurant[]>`
+     SELECT R.id,
+            R.name,
+            R.about,
+            R.phone,
+            R.website,
+            R.cuisine,
+            TIME_FORMAT(R.opening_hour, '%H:%i') as opening_hour,
+            TIME_FORMAT(R.closing_hour, '%H:%i') as closing_hour,
+            count(Rev.rating)                    as total_reviews,
+            JSON_OBJECT(
+                    'address_line', A.address_line,
+                    'zipcode', A.zipcode,
+                    'city', A.city,
+                    'state', A.state
+                )                                as address,
+          (SELECT ROUND(avg(Rev.rating), 1)
+           FROM Restaurant Res
+                  INNER JOIN Review Rev on Res.id = Rev.restaurant_id
+           WHERE Res.id = R.id)                as avg_rating
+      FROM Restaurant R
+            INNER JOIN Address A on A.restaurant_id = R.id
+            INNER JOIN Review Rev on Rev.restaurant_id = R.id
+      WHERE R.id = ${restaurantId}
+      GROUP BY R.id, A.id
+    `
+
+    console.log(restaurant[0])
+  }
+
+  await listSingleRestaurant()
 
   return {
     props: {},
