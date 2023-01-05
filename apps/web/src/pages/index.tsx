@@ -1,5 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { Address, Reservation, Restaurant, prisma } from '@mesavip/db'
+import { isToday } from 'date-fns'
 import type { GetServerSideProps } from 'next'
 import { signIn, signOut } from 'next-auth/react'
 import Head from 'next/head'
@@ -63,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       .create({
         data: {
           restaurant_id: reservationOrder.restaurant_id,
-          date: reservationOrder.date,
+          date: '2023-01-10T19:30:00.372Z',
           user_id: reservationOrder.customer_id,
         },
       })
@@ -76,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     console.log('#######################################')
   }
 
-  // await createReservation()
+  await createReservation()
 
   const cancelReservation = async () => {
     await prisma.reservation
@@ -325,7 +326,62 @@ export const getServerSideProps: GetServerSideProps = async () => {
     console.log(restaurant[0])
   }
 
-  await listSingleRestaurant()
+  // await listSingleRestaurant()
+
+  // It's lacking the filters
+  const listRestaurants = async () => {
+    type Restaurant = {
+      id: string
+      name: string
+      cuisine: string
+      total_reviews: number
+      avg_rating: number
+    }
+
+    const restaurants = await prisma.$queryRaw<Restaurant[]>`
+      SELECT R.id,
+        R.name,
+        R.cuisine,
+        'shorturl.at/bnoyO'   as image,
+        count(Rev.rating)     as total_reviews,
+        (SELECT ROUND(avg(Rev.rating), 1)
+          FROM Restaurant Res
+                  INNER JOIN Review Rev on Res.id = Rev.restaurant_id
+          WHERE Res.id = R.id) as avg_rating
+      FROM Restaurant R
+              INNER JOIN Review Rev on Rev.restaurant_id = R.id
+      GROUP BY R.id
+      ORDER BY avg_rating desc
+    `
+
+    console.log({ restaurants })
+  }
+
+  // await listRestaurants()
+
+  const listAvailableHours = async () => {
+    const workingHours = await prisma.restaurant.findFirst({
+      where: {
+        id: reservationOrder.restaurant_id,
+      },
+      select: {
+        opening_hour: true,
+        closing_hour: true,
+      },
+    })
+
+    let availableHours: any
+
+    const selectedDate = new Date('2023-01-01T10:30:00.372Z')
+
+    // if (isToday(selectedDate)) {
+    //   availableHours = await prisma.$queryRaw`
+
+    //   `
+    // }
+  }
+
+  await listAvailableHours()
 
   return {
     props: {},

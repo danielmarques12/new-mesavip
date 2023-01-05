@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker'
 import cuid from 'cuid'
 
 import { Prisma, prisma } from '.'
+import { getRandomCuisine, hours, restaurantNames } from './seed-helpers'
 
 const getUsers = async () => {
   const users = await prisma.user.findMany({
@@ -48,63 +49,6 @@ const getReservations = async () => {
   })
 
   return { reservations }
-}
-
-const restaurantNames = [
-  'Sea You Soon',
-  'Lets Ketchup',
-  'Basic Kneads Pizza',
-  'Backyard Bowls',
-  'Mellow Mushroom',
-  'Wicked Wok',
-  'Pie In the Sky',
-  'Chops and Hops',
-  'Yummy In The Tummy',
-  'Slice of Spice',
-  'Late Night Dine Right',
-  'Chops & Hops',
-  'Blazing Bean Roasters',
-  'Killer Pizza from Mars',
-  'The French Laundry',
-  'Starbelly',
-  'Egg Slut',
-  'Goosefoot',
-  'Garage Kitchen + Bar',
-  'Mr. & Mrs. Bun',
-  'Six Seven',
-  'Gochew Grill',
-  'Zero Zero',
-  'Girl and the Goat',
-  'Odd Duck',
-  'Toro Toro',
-  'The Purple Pig',
-  'Bite Me Sandwiches',
-  'The Pink Door',
-  'Blue Mermaid',
-]
-
-const getRandomCuisine = () => {
-  const cuisines = [
-    'Mexican',
-    'Swedish',
-    'Italian',
-    'Spanish',
-    'American',
-    'Scottish',
-    'British',
-    'Thai',
-    'Chinese',
-    'Russian',
-    'Brazilian',
-    'German',
-    'French',
-    'Cuban',
-    'Indian',
-    'Pizza',
-    'Hamburger',
-  ]
-
-  return cuisines[Math.floor(Math.random() * cuisines.length)]
 }
 
 const seedUsers = async () => {
@@ -230,6 +174,12 @@ const seedAddresses = async () => {
   })
 }
 
+const seedHours = async () => {
+  await prisma.hour.createMany({
+    data: hours(),
+  })
+}
+
 const cleanTables = async () => {
   await prisma.address.deleteMany()
   await prisma.account.deleteMany()
@@ -244,7 +194,9 @@ const seed = async () => {
   // await seedRestaurants()
   // await seedAddresses()
   // await seedReservations()
-  await seedReviews()
+  // await seedReviews()
+  await seedHours()
+
   // await cleanTables()
 }
 
