@@ -30,15 +30,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 
   const reservationOrder = {
-    customer_id: 'seed-clce5pwey0000kjif51ts05oh',
-    restaurant_id: 'seed-clce5pwor000akjifaf5z2ikm',
+    customer_id: 'seed-clcilzjjm0000j1ifdq4ne8ys',
+    restaurant_id: 'seed-clcilzl7c000aj1if6ohn84wl',
     date: '2023-01-01T23:30:00.372Z',
   }
 
   const createReservation = async () => {
     const totalTables = await prisma.restaurant.findFirst({
       where: {
-        id: 'seed-clc0z7293000e20if30e4a7rv',
+        id: reservationOrder.restaurant_id,
       },
       select: {
         total_tables: true,
@@ -77,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     console.log('#######################################')
   }
 
-  await createReservation()
+  // await createReservation()
 
   const cancelReservation = async () => {
     await prisma.reservation
@@ -360,25 +360,37 @@ export const getServerSideProps: GetServerSideProps = async () => {
   // await listRestaurants()
 
   const listAvailableHours = async () => {
-    const workingHours = await prisma.restaurant.findFirst({
-      where: {
-        id: reservationOrder.restaurant_id,
-      },
-      select: {
-        opening_hour: true,
-        closing_hour: true,
-      },
-    })
+    const selectedDate = new Date('2023-01-07')
 
-    let availableHours: any
+    const availableHours = await prisma.$queryRaw<Array<{ hour: string }>>`
+    SELECT to_char(h.hour::time, 'HH24:MI') as hour
+    FROM "Hour" h
+    LEFT JOIN "Restaurant" res ON res.id = ${reservationOrder.restaurant_id}
+    WHERE CASE
+              WHEN ${selectedDate} >= now()::date
+                  THEN true
+              ELSE false
+        END
+      AND to_char(h.hour::time, 'HH24:MI') NOT IN (
+        SELECT to_char(r.date::time, 'HH24:MI') yeah
+        FROM "Reservation" r
+                 INNER JOIN "Restaurant" r2 on r.restaurant_id = r2.id
+        WHERE r2.id = ${reservationOrder.restaurant_id}
+          AND r.date::date = ${selectedDate}
+        GROUP BY r.date, r2.total_tables
+        HAVING count(r.date) = r2.total_tables
+    )
+      AND h.hour >= res.opening_hour
+      AND h.hour <= res.closing_hour
+      AND CASE
+              WHEN ${selectedDate} = now()::date
+                  THEN h.hour::time > now()::time
+              ELSE true
+        END
+    ORDER BY to_char(h.hour::time, 'HH24:MI');
+    `
 
-    const selectedDate = new Date('2023-01-01T10:30:00.372Z')
-
-    // if (isToday(selectedDate)) {
-    //   availableHours = await prisma.$queryRaw`
-
-    //   `
-    // }
+    console.log({ availableHours })
   }
 
   await listAvailableHours()

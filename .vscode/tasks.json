@@ -10,7 +10,7 @@
   "tasks": [
     {
       "label": "Launch Mesavip Development terminals",
-      "dependsOn": ["mesavip", "pscale(3306)", "Prisma Studio(5555)"],
+      "dependsOn": ["mesavip", "Prisma Studio(5555)"],
       "group": {
         "kind": "build",
         "isDefault": true
@@ -20,13 +20,6 @@
       "label": "mesavip",
       "type": "shell",
       "command": "pnpm dev",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "pscale(3306)",
-      "type": "shell",
-      "command": "pscale connect mesavip dev",
       "isBackground": false,
       "problemMatcher": []
     },

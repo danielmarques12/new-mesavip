@@ -1,7 +1,7 @@
 datasource db {
-    provider     = "mysql"
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
+    provider          = "postgresql"
+    url               = env("DATABASE_URL")
+    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 generator client {
@@ -14,20 +14,19 @@ model Account {
     type                     String
     provider                 String
     providerAccountId        String
-    refresh_token            String? @db.Text
-    access_token             String? @db.Text
+    refresh_token            String?
+    access_token             String?
     expires_at               Int?
     refresh_token_expires_in Int? // GitHub specific
     token_type               String?
     scope                    String?
-    id_token                 String? @db.Text
+    id_token                 String?
     session_state            String?
     oauth_token              String? // Twitter specific
     oauth_token_secret       String? // Twitter specific
-    user                     User    @relation(fields: [userId], references: [id])
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
-    @@index([userId])
 }
 
 model Session {
@@ -35,9 +34,7 @@ model Session {
     sessionToken String   @unique
     userId       String
     expires      DateTime
-    user         User     @relation(fields: [userId], references: [id])
-
-    @@index([userId])
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -64,14 +61,14 @@ model VerificationToken {
 
 model Restaurant {
     id           String   @id @default(cuid())
-    name         String   @db.TinyText
-    about        String   @db.VarChar(1000)
-    phone        String   @db.VarChar(20)
-    website      String   @db.TinyText
-    total_tables Int      @db.UnsignedTinyInt
-    opening_hour String   @db.TinyText
-    closing_hour String   @db.TinyText
-    cuisine      String   @db.TinyText
+    name         String
+    about        String
+    phone        String
+    website      String
+    total_tables Int
+    opening_hour String
+    closing_hour String
+    cuisine      String
     created_at   DateTime @default(now())
     updated_at   DateTime @default(now()) @updatedAt
 
@@ -82,39 +79,33 @@ model Restaurant {
 
 model Address {
     id           String   @id @default(cuid())
-    address_line String   @db.TinyText
-    zipcode      String   @db.VarChar(10)
-    city         String   @db.TinyText
-    state        String   @db.TinyText
-    country      String   @db.TinyText
+    address_line String
+    zipcode      String
+    city         String
+    state        String
+    country      String
     created_at   DateTime @default(now())
     updated_at   DateTime @default(now()) @updatedAt
 
-    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
+    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id], onDelete: Cascade)
     restaurant_id String     @unique
-
-    @@index([restaurant_id])
 }
 
 model Review {
     id         String   @id @default(cuid())
-    rating     Int      @db.UnsignedTinyInt
-    comment    String   @db.VarChar(1000)
+    rating     Int
+    comment    String
     created_at DateTime @default(now())
     updated_at DateTime @default(now()) @updatedAt
 
-    reservation    Reservation @relation(fields: [reservation_id], references: [id])
+    reservation    Reservation @relation(fields: [reservation_id], references: [id], onDelete: Cascade)
     reservation_id String      @unique
 
-    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
+    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id], onDelete: Cascade)
     restaurant_id String
 
-    user    User   @relation(fields: [user_id], references: [id])
+    user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
     user_id String
-
-    @@index([reservation_id])
-    @@index([restaurant_id])
-    @@index([user_id])
 }
 
 model Reservation {
@@ -125,18 +116,15 @@ model Reservation {
     created_at DateTime @default(now())
     updated_at DateTime @default(now()) @updatedAt
 
-    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
+    restaurant    Restaurant @relation(fields: [restaurant_id], references: [id], onDelete: Cascade)
     restaurant_id String
 
-    user    User    @relation(fields: [user_id], references: [id])
+    user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
     user_id String
     Review  Review?
-
-    @@index([restaurant_id])
-    @@index([user_id])
 }
 
 model Hour {
     id   String @id @default(cuid())
-    hour String @db.TinyText
+    hour String
 }

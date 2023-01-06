@@ -8,6 +8,8 @@
     "clean": "rm -rf .turbo node_modules",
     "db:generate": "pnpm with-env prisma generate",
     "db:push": "pnpm with-env prisma db push --skip-generate",
+    "db:migrate": "pnpm with-env prisma migrate dev",
+    "db:deploy": "pnpm with-env prisma migrate deploy",
     "db:seed": "pnpm with-env prisma db seed",
     "prisma-studio": "pnpm with-env prisma studio --port 5555",
     "with-env": "dotenv -e ../../.env --"
