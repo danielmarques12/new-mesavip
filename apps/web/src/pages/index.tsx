@@ -338,19 +338,38 @@ export const getServerSideProps: GetServerSideProps = async () => {
       avg_rating: number
     }
 
+    const cuisine = 'Hamburger'
+    const restaurantName = 'go'
+    const minAvgRating = 3
+
     const restaurants = await prisma.$queryRaw<Restaurant[]>`
-      SELECT R.id,
-        R.name,
-        R.cuisine,
-        'shorturl.at/bnoyO'   as image,
-        count(Rev.rating)     as total_reviews,
-        (SELECT ROUND(avg(Rev.rating), 1)
-          FROM Restaurant Res
-                  INNER JOIN Review Rev on Res.id = Rev.restaurant_id
-          WHERE Res.id = R.id) as avg_rating
-      FROM Restaurant R
-              INNER JOIN Review Rev on Rev.restaurant_id = R.id
-      GROUP BY R.id
+      SELECT r.id,
+             r.name,
+             r.cuisine,
+             'shorturl.at/bnoyO' as image,
+             count(Rev.rating)   as total_reviews,
+             (
+                 SELECT round(avg(Rev.rating), 1)
+                 FROM "Restaurant" Res
+                          INNER JOIN "Review" Rev on Res.id = Rev.restaurant_id
+                 WHERE Res.id = r.id
+             )                   as avg_rating
+      FROM "Restaurant" r
+              INNER JOIN "Review" Rev on Rev.restaurant_id = r.id
+      WHERE r.cuisine = coalesce(${cuisine}, r.cuisine)
+        AND upper(r.name) LIKE upper('%'||${restaurantName}||'%')
+        AND CASE
+                WHEN 1 IS NOT NULL
+                    THEN (
+                            SELECT cast(avg(rev2.rating) as decimal(10, 1)) as avg_rating
+                            FROM "Restaurant" r2
+                                      LEFT JOIN "Review" rev2 ON rev2.restaurant_id = r2.id
+                            WHERE r2.id = r.id
+                            GROUP BY r2.id
+                        ) >= ${minAvgRating}
+                ELSE TRUE
+          END
+      GROUP BY r.id
       ORDER BY avg_rating desc
     `
 
@@ -393,7 +412,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     console.log({ availableHours })
   }
 
-  await listAvailableHours()
+  // await listAvailableHours()
 
   return {
     props: {},
