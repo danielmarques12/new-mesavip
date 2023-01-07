@@ -3,6 +3,6 @@
 @tailwind utilities;
 
 body {
-  background-color: #1e293b;
+  /* background-color: #1e293b; */
   font-family: var(--open-sans);
 }

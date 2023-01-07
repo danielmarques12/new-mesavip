@@ -420,7 +420,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 }
 
 export default function Home() {
-  const postQuery = trpc.post.all.useQuery()
+  // const postQuery = trpc.post.all.useQuery()
 
   return (
     <>
@@ -436,13 +436,13 @@ export default function Home() {
           </h1>
           <AuthShowcase />
 
-          <div className='flex h-[60vh] justify-center px-4 text-2xl'>
+          {/* <div className='flex h-[60vh] justify-center px-4 text-2xl'>
             {postQuery.data ? (
               <div className='flex flex-col gap-4'>{postQuery.data}</div>
             ) : (
               <p>yeah</p>
             )}
-          </div>
+          </div> */}
         </div>
       </main>
     </>
