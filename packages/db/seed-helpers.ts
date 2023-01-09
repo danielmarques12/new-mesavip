@@ -56,7 +56,7 @@ export const restaurantNames = [
   'Killer Pizza from Mars',
   'The French Laundry',
   'Starbelly',
-  'Egg Slut',
+  'Bill Grill',
   'Goosefoot',
   'Garage Kitchen + Bar',
   'Mr. & Mrs. Bun',

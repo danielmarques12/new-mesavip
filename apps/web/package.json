@@ -10,6 +10,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.4.6",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@js-temporal/polyfill": "^0.4.3",
     "@mesavip/api": "*",
     "@mesavip/auth": "*",
@@ -17,17 +20,19 @@
     "@mesavip/tailwind-config": "*",
     "@next/font": "^13.1.0",
     "@tanstack/react-query": "^4.20.4",
-    "@trpc/client": "^10.5.0",
-    "@trpc/next": "^10.5.0",
-    "@trpc/react-query": "^10.5.0",
-    "@trpc/server": "^10.5.0",
+    "@trpc/client": "^10.8.1",
+    "@trpc/next": "^10.8.1",
+    "@trpc/react-query": "^10.8.1",
+    "@trpc/server": "^10.8.1",
     "date-fns": "^2.29.3",
+    "framer-motion": "^8.2.4",
     "next": "^13.0.7",
     "next-auth": "^4.18.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.7.1",
-    "zod": "^3.20.0"
+    "zod": "^3.20.0",
+    "zustand": "^4.2.0"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",

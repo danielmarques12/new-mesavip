@@ -1,4 +1,5 @@
 // src/pages/_app.tsx
+import { ChakraProvider } from '@chakra-ui/react'
 import { Open_Sans } from '@next/font/google'
 import type { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
@@ -25,7 +26,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
     </style>
 
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <ChakraProvider>
+        <Component {...pageProps} />
+      </ChakraProvider>
     </SessionProvider>
   </>
 )

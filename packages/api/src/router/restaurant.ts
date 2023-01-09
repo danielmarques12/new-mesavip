@@ -1,26 +1,35 @@
+import { z } from 'zod'
+
 import { publicProcedure, router } from '../trpc'
 
+export type Restaurant = {
+  id: string
+  name: string
+  cuisine: string
+  image: string
+  total_reviews: string
+  avg_rating: string
+}
+
 export const restaurantRouter = router({
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    type Restaurant = {
-      id: string
-      name: string
-      cuisine: string
-      image: string
-      total_reviews: number
-      avg_rating: number
-    }
+  getAll: publicProcedure
+    .input(
+      z.object({
+        cuisine: z.string().nullable(),
+        restaurantName: z.string().nullable(),
+        minAvgRating: z.number().default(3),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const cuisine = input.cuisine || null
 
-    const cuisine = undefined
-    const restaurantName = ''
-    const minAvgRating = 3
-
-    const restaurants = await ctx.prisma.$queryRaw<Restaurant[]>`
+      const restaurants = await ctx.prisma.$queryRaw<Restaurant[]>`
       SELECT r.id,
              r.name,
              r.cuisine,
-             'shorturl.at/bnoyO' as image,
-             count(Rev.rating)   as total_reviews,
+             'Brooklyn' as county,
+             'https://shorturl.at/bnoyO' as image,
+             count(Rev.rating)::varchar   as total_reviews,
              (
                  SELECT round(avg(Rev.rating), 1)
                  FROM "Restaurant" Res
@@ -30,7 +39,7 @@ export const restaurantRouter = router({
       FROM "Restaurant" r
               INNER JOIN "Review" Rev on Rev.restaurant_id = r.id
       WHERE r.cuisine = coalesce(${cuisine}, r.cuisine)
-        AND upper(r.name) LIKE upper('%'||${restaurantName}||'%')
+        AND upper(r.name) LIKE upper('%'||${input.restaurantName}||'%')
         AND CASE
                 WHEN 1 IS NOT NULL
                     THEN (
@@ -39,13 +48,33 @@ export const restaurantRouter = router({
                                       LEFT JOIN "Review" rev2 ON rev2.restaurant_id = r2.id
                             WHERE r2.id = r.id
                             GROUP BY r2.id
-                        ) >= ${minAvgRating}
+                        ) >= ${input.minAvgRating}
                 ELSE TRUE
           END
       GROUP BY r.id
       ORDER BY avg_rating desc
     `
 
-    return { restaurants }
+      return { restaurants }
+    }),
+
+  getCuisines: publicProcedure.query(async ({ ctx }) => {
+    const cuisines = ctx.prisma.$queryRaw<
+      Array<{
+        cuisine: string
+        total: string
+      }>
+    >`
+      SELECT DISTINCT cuisine,
+                      (
+                          SELECT COUNT(r2.id)
+                          FROM "Restaurant" r2
+                          WHERE r2.cuisine = r.cuisine
+                      ) AS total
+      FROM "Restaurant" r
+      GROUP BY r.id
+    `
+
+    return { cuisines }
   }),
 })
