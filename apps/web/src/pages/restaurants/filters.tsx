@@ -15,10 +15,14 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { FaSearch, FaTimes } from 'react-icons/fa'
+import { trpc } from 'utils/trpc'
 
-import { useCuisines } from '../hooks/use-cuisines'
-import { useRestaurantFiltersStore } from './hooks/restaurant-filters-store'
-import { useSearchBar } from './hooks/use-search-bar'
+import {
+  useCuisines,
+  useFilters,
+  useFiltersActions,
+  useSearchInput,
+} from './restaurant-filters-store'
 
 export const Filters = () => (
   <Box
@@ -40,7 +44,9 @@ export const Filters = () => (
 )
 
 export const SearchBar = () => {
-  const { search, searchSet, searchRestaurant, handleClick } = useSearchBar()
+  const searchInput = useSearchInput()
+  const filters = useFilters()
+  const actions = useFiltersActions()
 
   return (
     <Flex as='form' bg='white' mx='auto' w='100%'>
@@ -50,17 +56,17 @@ export const SearchBar = () => {
           name='search'
           type='text'
           placeholder='Find restaurants or cuisines'
-          value={search}
-          onChange={(e) => searchSet(e.target.value)}
+          value={searchInput}
+          onChange={(e) => actions.updateRestaurantName(e.target.value)}
         />
 
         <InputRightElement
           cursor='pointer'
           borderRightRadius='md'
           _hover={{ bg: 'gray.200' }}
-          onClick={handleClick}
+          onClick={actions.handleClickSearchInput}
         >
-          {searchRestaurant ? (
+          {!!filters.restaurantName ? (
             <FaTimes aria-label='close-icon' />
           ) : (
             <FaSearch aria-label='search-icon' />
@@ -72,7 +78,14 @@ export const SearchBar = () => {
 }
 
 const Cuisines = () => {
-  const { cuisines, handleChangeCuisine } = useCuisines()
+  const cuisines = useCuisines()
+  const actions = useFiltersActions()
+
+  const { data } = trpc.restaurant.getCuisines.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  })
+
+  data && actions.setCuisines(data.cuisines)
 
   return (
     <Stack>
@@ -88,7 +101,7 @@ const Cuisines = () => {
             colorScheme='yellow'
             size='lg'
             _hover={{ color: 'yellow.400' }}
-            onChange={() => handleChangeCuisine(index)}
+            onChange={() => actions.updateCuisine(cuisine.name, index)}
           >
             <Text color='gray.500'>
               {/* &#40; &#41; - left and right parentheses */}
@@ -102,15 +115,16 @@ const Cuisines = () => {
 }
 
 function ReviewScore() {
-  const { filters, updateAvgRating } = useRestaurantFiltersStore()
+  const filters = useFilters()
+  const actions = useFiltersActions()
 
   function handleIsSelected(i: number) {
-    if (filters.avg_rating === i) return true
+    if (filters.avgRating === i) return true
   }
 
   return (
     <Stack spacing={3}>
-      <Text as='b'>Review score ({filters.avg_rating} and above)</Text>
+      <Text as='b'>Review score ({filters.avgRating} and above)</Text>
 
       <Box my='auto'>
         <Slider
@@ -120,7 +134,7 @@ function ReviewScore() {
           step={1}
           colorScheme='yellow'
           onChangeEnd={(score) => {
-            updateAvgRating(score.toString())
+            actions.updateAvgRating(score)
           }}
         >
           <SliderTrack>

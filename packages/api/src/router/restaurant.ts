@@ -11,12 +11,17 @@ export type Restaurant = {
   avg_rating: string
 }
 
+export type Cuisine = {
+  name: string
+  total: string
+}
+
 export const restaurantRouter = router({
   getAll: publicProcedure
     .input(
       z.object({
-        cuisine: z.string().nullable(),
-        restaurantName: z.string().nullable(),
+        cuisine: z.string().optional(),
+        restaurantName: z.string().optional(),
         minAvgRating: z.number().default(3),
       }),
     )
@@ -59,13 +64,8 @@ export const restaurantRouter = router({
     }),
 
   getCuisines: publicProcedure.query(async ({ ctx }) => {
-    const cuisines = ctx.prisma.$queryRaw<
-      Array<{
-        cuisine: string
-        total: string
-      }>
-    >`
-      SELECT DISTINCT cuisine,
+    const cuisines = await ctx.prisma.$queryRaw<Cuisine[]>`
+      SELECT DISTINCT cuisine as name,
                       (
                           SELECT COUNT(r2.id)
                           FROM "Restaurant" r2
