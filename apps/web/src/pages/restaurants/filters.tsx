@@ -15,7 +15,6 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { FaSearch, FaTimes } from 'react-icons/fa'
-import { trpc } from 'utils/trpc'
 
 import {
   useCuisines,
@@ -24,26 +23,28 @@ import {
   useSearchInput,
 } from './restaurant-filters-store'
 
-export const Filters = () => (
-  <Box
-    minW={320}
-    h={550}
-    mt={12}
-    bg='white'
-    rounded='lg'
-    shadow='sm'
-    display={{ base: 'none', xl: 'block' }}
-  >
-    <Stack spacing={8} mt='8' px='6' mx='auto'>
-      <SearchBar />
-      <Cuisines />
-      <Divider />
-      <ReviewScore />
-    </Stack>
-  </Box>
-)
+export const Filters = () => {
+  return (
+    <Box
+      minW={320}
+      // h={550}
+      mt={12}
+      bg='white'
+      rounded='lg'
+      shadow='sm'
+      display={{ base: 'none', xl: 'block' }}
+    >
+      <Stack spacing={8} p='12' mx='auto'>
+        <SearchBar />
+        <Cuisines />
+        <Divider />
+        <ReviewScore />
+      </Stack>
+    </Box>
+  )
+}
 
-export const SearchBar = () => {
+const SearchBar = () => {
   const searchInput = useSearchInput()
   const filters = useFilters()
   const actions = useFiltersActions()
@@ -78,14 +79,8 @@ export const SearchBar = () => {
 }
 
 const Cuisines = () => {
-  const cuisines = useCuisines()
   const actions = useFiltersActions()
-
-  const { data } = trpc.restaurant.getCuisines.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-  })
-
-  data && actions.setCuisines(data.cuisines)
+  const cuisines = useCuisines()
 
   return (
     <Stack>
@@ -114,11 +109,11 @@ const Cuisines = () => {
   )
 }
 
-function ReviewScore() {
+const ReviewScore = () => {
   const filters = useFilters()
   const actions = useFiltersActions()
 
-  function handleIsSelected(i: number) {
+  const handleIsSelected = (i: number) => {
     if (filters.avgRating === i) return true
   }
 

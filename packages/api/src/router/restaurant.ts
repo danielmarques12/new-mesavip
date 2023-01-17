@@ -11,11 +11,6 @@ export type Restaurant = {
   avg_rating: string
 }
 
-export type Cuisine = {
-  name: string
-  total: string
-}
-
 export const restaurantRouter = router({
   getAll: publicProcedure
     .input(
@@ -62,19 +57,4 @@ export const restaurantRouter = router({
 
       return { restaurants }
     }),
-
-  getCuisines: publicProcedure.query(async ({ ctx }) => {
-    const cuisines = await ctx.prisma.$queryRaw<Cuisine[]>`
-      SELECT DISTINCT cuisine as name,
-                      (
-                          SELECT COUNT(r2.id)
-                          FROM "Restaurant" r2
-                          WHERE r2.cuisine = r.cuisine
-                      ) AS total
-      FROM "Restaurant" r
-      GROUP BY r.id
-    `
-
-    return { cuisines }
-  }),
 })

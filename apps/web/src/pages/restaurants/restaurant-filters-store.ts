@@ -1,4 +1,3 @@
-import { Cuisine } from '@mesavip/api/src/router/restaurant'
 import create from 'zustand'
 
 type FiltersKeys = 'restaurantName' | 'cuisine' | 'avgRating'
@@ -9,10 +8,14 @@ type RestaurantFilters = {
   restaurantName?: string
 }
 
-type Cuisines = Array<Cuisine & { isChecked: boolean }>
+export type Cuisine = {
+  name: string
+  total: string
+  isChecked: boolean
+}
 
 type RestaurantStore = {
-  cuisines: Cuisines
+  cuisines: Cuisine[]
   filters: RestaurantFilters
   searchInput: string
   actions: {
@@ -33,13 +36,13 @@ const updateFilters = (
   [key]: value,
 })
 
-const setCuisines = (cuisines: Cuisine[]): Cuisines =>
+const setCuisines = (cuisines: Cuisine[]): Cuisine[] =>
   cuisines.map((cuisine) => ({
     ...cuisine,
     isChecked: false,
   }))
 
-const handleChangeCuisine = (index: number, cuisines: Cuisines): Cuisines => {
+const handleChangeCuisine = (index: number, cuisines: Cuisine[]): Cuisine[] => {
   const newCuisines = cuisines.map((cuisine, i) => ({
     ...cuisine,
     isChecked: i === index ? !cuisine.isChecked : false,

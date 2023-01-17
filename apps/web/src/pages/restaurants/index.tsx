@@ -1,11 +1,50 @@
 import { Box, Flex, Skeleton, Stack } from '@chakra-ui/react'
+import { prisma } from '@mesavip/db'
+import { GetServerSideProps } from 'next'
 import { trpc } from 'utils/trpc'
 
 import { Filters } from './filters'
 import { RestaurantCard } from './restaurant-card'
-import { useFilters } from './restaurant-filters-store'
+import {
+  Cuisine,
+  useFilters,
+  useFiltersActions,
+} from './restaurant-filters-store'
 
-export default function Home() {
+export const getServerSideProps: GetServerSideProps = async () => {
+  const cuisines = await prisma.$queryRaw<Cuisine[]>`
+      SELECT DISTINCT cuisine as name,
+                      (
+                          SELECT COUNT(r2.id)::varchar
+                          FROM "Restaurant" r2
+                          WHERE r2.cuisine = r.cuisine
+                      ) AS total
+      FROM "Restaurant" r
+      GROUP BY r.id
+    `.then((res) =>
+    res.map((cuisine) => ({
+      ...cuisine,
+      isChecked: false,
+    })),
+  )
+
+  return {
+    props: {
+      cuisines,
+    },
+  }
+}
+
+export default function Restaurants({ cuisines }: { cuisines: Cuisine[] }) {
+  const actions = useFiltersActions()
+  const idk = () => {
+    actions.setCuisines(cuisines)
+    console.log('#############')
+    console.log('#############')
+    console.log('#############')
+  }
+  idk()
+
   const filters = useFilters()
   const { data, isLoading, isFetching } = trpc.restaurant.getAll.useQuery({
     cuisine: filters.cuisine,
