@@ -20,7 +20,7 @@ type RestaurantStore = {
   searchInput: string
   actions: {
     updateRestaurantName: (value: string) => void
-    updateCuisine: (value: string, index: number) => void
+    updateCuisine: (value: string | undefined, index: number) => void
     updateAvgRating: (value: number) => void
     setCuisines: (cuisines: Cuisine[]) => void
     handleClickSearchInput: () => void
@@ -30,7 +30,7 @@ type RestaurantStore = {
 const updateFilters = (
   filters: RestaurantFilters,
   key: FiltersKeys,
-  value: string | number,
+  value: string | number | undefined,
 ): RestaurantFilters => ({
   ...filters,
   [key]: value,
@@ -51,7 +51,7 @@ const handleChangeCuisine = (index: number, cuisines: Cuisine[]): Cuisine[] => {
   return newCuisines
 }
 
-const handleClickSearchInput = (filters: RestaurantFilters) => {}
+// const handleClickSearchInput = (filters: RestaurantFilters) => {}
 
 const useRestaurantFiltersStore = create<RestaurantStore>((set) => ({
   cuisines: [],
@@ -85,6 +85,7 @@ const useRestaurantFiltersStore = create<RestaurantStore>((set) => ({
     },
 
     updateCuisine: (value, index) => {
+      console.log({ value, index })
       set((state) => ({
         ...state,
         filters: updateFilters(state.filters, 'cuisine', value),

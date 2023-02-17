@@ -96,7 +96,12 @@ const Cuisines = () => {
             colorScheme='yellow'
             size='lg'
             _hover={{ color: 'yellow.400' }}
-            onChange={() => actions.updateCuisine(cuisine.name, index)}
+            onChange={() =>
+              actions.updateCuisine(
+                !cuisine.isChecked ? cuisine.name : undefined,
+                index,
+              )
+            }
           >
             <Text color='gray.500'>
               {/* &#40; &#41; - left and right parentheses */}

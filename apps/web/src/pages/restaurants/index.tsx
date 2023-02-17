@@ -1,6 +1,7 @@
 import { Box, Flex, Skeleton, Stack } from '@chakra-ui/react'
 import { prisma } from '@mesavip/db'
 import { GetServerSideProps } from 'next'
+import { useMemo } from 'react'
 import { trpc } from 'utils/trpc'
 
 import { Filters } from './filters'
@@ -37,20 +38,17 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
 export default function Restaurants({ cuisines }: { cuisines: Cuisine[] }) {
   const actions = useFiltersActions()
-  const idk = () => {
-    actions.setCuisines(cuisines)
-    console.log('#############')
-    console.log('#############')
-    console.log('#############')
-  }
-  idk()
+  useMemo(() => actions.setCuisines(cuisines), [actions, cuisines])
 
   const filters = useFilters()
-  const { data, isLoading, isFetching } = trpc.restaurant.getAll.useQuery({
-    cuisine: filters.cuisine,
-    restaurantName: filters.restaurantName,
-    minAvgRating: filters.avgRating,
-  })
+  const { data, isLoading, isFetching } = trpc.restaurant.getAll.useQuery(
+    {
+      cuisine: filters.cuisine,
+      restaurantName: filters.restaurantName,
+      minAvgRating: filters.avgRating,
+    },
+    { refetchOnWindowFocus: false },
+  )
 
   return (
     <Box bg={{ base: 'inherit', md: 'gray.50' }} minHeight='100vh'>
