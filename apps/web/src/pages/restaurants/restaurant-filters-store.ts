@@ -17,13 +17,12 @@ export type Cuisine = {
 type RestaurantStore = {
   cuisines: Cuisine[]
   filters: RestaurantFilters
-  searchInput: string
   actions: {
     updateRestaurantName: (value: string) => void
     updateCuisine: (value: string | undefined, index: number) => void
     updateAvgRating: (value: number) => void
     setCuisines: (cuisines: Cuisine[]) => void
-    handleClickSearchInput: () => void
+    handleClickSearchIcon: () => void
   }
 }
 
@@ -51,8 +50,6 @@ const handleChangeCuisine = (index: number, cuisines: Cuisine[]): Cuisine[] => {
   return newCuisines
 }
 
-// const handleClickSearchInput = (filters: RestaurantFilters) => {}
-
 const useRestaurantFiltersStore = create<RestaurantStore>((set) => ({
   cuisines: [],
   filters: {
@@ -60,13 +57,16 @@ const useRestaurantFiltersStore = create<RestaurantStore>((set) => ({
     cuisine: undefined,
     restaurantName: '',
   },
-  searchInput: '',
 
   actions: {
-    handleClickSearchInput: () => {
+    handleClickSearchIcon: () => {
       set((state) => ({
         ...state,
-        searchInput: !!state.filters.restaurantName ? '' : state.searchInput,
+        filters: updateFilters(
+          state.filters,
+          'restaurantName',
+          !!state.filters.restaurantName ? '' : state.filters.restaurantName,
+        ),
       }))
     },
 
@@ -107,9 +107,6 @@ export const useFilters = () =>
 
 export const useCuisines = () =>
   useRestaurantFiltersStore((state) => state.cuisines)
-
-export const useSearchInput = () =>
-  useRestaurantFiltersStore((state) => state.searchInput)
 
 export const useFiltersActions = () =>
   useRestaurantFiltersStore((state) => state.actions)

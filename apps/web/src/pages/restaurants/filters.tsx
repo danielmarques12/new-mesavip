@@ -45,9 +45,10 @@ export const Filters = () => {
 }
 
 const SearchBar = () => {
-  const searchInput = useSearchInput()
   const filters = useFilters()
   const actions = useFiltersActions()
+
+  console.log(filters.restaurantName)
 
   return (
     <Flex as='form' bg='white' mx='auto' w='100%'>
@@ -57,22 +58,20 @@ const SearchBar = () => {
           name='search'
           type='text'
           placeholder='Find restaurants or cuisines'
-          value={searchInput}
+          value={filters.restaurantName}
           onChange={(e) => actions.updateRestaurantName(e.target.value)}
         />
 
-        <InputRightElement
-          cursor='pointer'
-          borderRightRadius='md'
-          _hover={{ bg: 'gray.200' }}
-          onClick={actions.handleClickSearchInput}
-        >
-          {!!filters.restaurantName ? (
+        {!!filters.restaurantName ? (
+          <InputRightElement
+            cursor='pointer'
+            borderRightRadius='md'
+            _hover={{ bg: 'gray.200' }}
+            onClick={actions.handleClickSearchIcon}
+          >
             <FaTimes aria-label='close-icon' />
-          ) : (
-            <FaSearch aria-label='search-icon' />
-          )}
-        </InputRightElement>
+          </InputRightElement>
+        ) : null}
       </InputGroup>
     </Flex>
   )
