@@ -53,7 +53,7 @@ const handleChangeCuisine = (index: number, cuisines: Cuisine[]): Cuisine[] => {
 const useRestaurantFiltersStore = create<RestaurantStore>((set) => ({
   cuisines: [],
   filters: {
-    avgRating: 3,
+    avgRating: 2,
     cuisine: undefined,
     restaurantName: '',
   },
@@ -85,7 +85,6 @@ const useRestaurantFiltersStore = create<RestaurantStore>((set) => ({
     },
 
     updateCuisine: (value, index) => {
-      console.log({ value, index })
       set((state) => ({
         ...state,
         filters: updateFilters(state.filters, 'cuisine', value),

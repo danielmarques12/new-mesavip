@@ -1,4 +1,4 @@
-import { useAuthError } from 'lib/hooks/use-auth-error'
+import { useAuthError } from 'hooks/use-auth-error'
 import { GetServerSideProps } from 'next'
 import {
   ClientSafeProvider,

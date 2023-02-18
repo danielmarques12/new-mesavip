@@ -43,11 +43,7 @@ const Thumbnail = () => {
   const restaurant = useRestaurantCardCtx()
 
   return (
-    <Box
-      // my='auto'
-      borderLeftRadius='lg'
-      borderRightRadius={{ base: 'lg', md: 'none' }}
-    >
+    <Box borderLeftRadius='lg' borderRightRadius={{ base: 'lg', md: 'none' }}>
       <Image
         src={restaurant.image}
         alt={`${restaurant.name} thumbnail`}
@@ -93,7 +89,7 @@ const ReviewInfo = () => {
         direction={{ base: 'row', md: 'column' }}
         align='center'
         flexGrow='1'
-        gridGap='3'
+        gridGap='1'
       >
         <Score />
 

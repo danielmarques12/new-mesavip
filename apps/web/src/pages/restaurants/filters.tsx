@@ -14,21 +14,19 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
-import { FaSearch, FaTimes } from 'react-icons/fa'
+import { FaTimes } from 'react-icons/fa'
 
 import {
   useCuisines,
   useFilters,
   useFiltersActions,
-  useSearchInput,
 } from './restaurant-filters-store'
 
 export const Filters = () => {
   return (
     <Box
       minW={320}
-      // h={550}
-      mt={12}
+      h={880}
       bg='white'
       rounded='lg'
       shadow='sm'
@@ -47,8 +45,6 @@ export const Filters = () => {
 const SearchBar = () => {
   const filters = useFilters()
   const actions = useFiltersActions()
-
-  console.log(filters.restaurantName)
 
   return (
     <Flex as='form' bg='white' mx='auto' w='100%'>
@@ -123,7 +119,7 @@ const ReviewScore = () => {
 
   return (
     <Stack spacing={3}>
-      <Text as='b'>Review score ({filters.avgRating} and above)</Text>
+      <Text as='b'>Review score</Text>
 
       <Box my='auto'>
         <Slider

@@ -1,6 +1,4 @@
-import { Temporal } from '@js-temporal/polyfill'
 import { Address, Reservation, Restaurant, prisma } from '@mesavip/db'
-import { isToday } from 'date-fns'
 import type { GetServerSideProps } from 'next'
 import { signIn, signOut } from 'next-auth/react'
 import Head from 'next/head'

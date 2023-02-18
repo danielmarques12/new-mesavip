@@ -41,7 +41,7 @@ export default function Restaurants({ cuisines }: { cuisines: Cuisine[] }) {
   useMemo(() => actions.setCuisines(cuisines), [actions, cuisines])
 
   const filters = useFilters()
-  const { data, isLoading, isFetching } = trpc.restaurant.getAll.useQuery(
+  const { data } = trpc.restaurant.getAll.useQuery(
     {
       cuisine: filters.cuisine,
       restaurantName: filters.restaurantName,
@@ -58,18 +58,33 @@ export default function Restaurants({ cuisines }: { cuisines: Cuisine[] }) {
             <Filters />
 
             <Stack spacing={4}>
-              {data?.restaurants.map((restaurant) => (
-                <Skeleton
-                  key={restaurant.id}
-                  isLoaded={!isLoading || !isFetching}
-                >
-                  <RestaurantCard restaurant={restaurant} />
-                </Skeleton>
-              ))}
+              {data ? (
+                data?.restaurants.map((restaurant, index) => (
+                  <RestaurantCard key={index} restaurant={restaurant} />
+                ))
+              ) : (
+                <RestaurantCardsSkeleton />
+              )}
             </Stack>
           </Flex>
         </Stack>
       </Box>
     </Box>
+  )
+}
+
+const RestaurantCardsSkeleton = () => {
+  return (
+    <>
+      {Array.from({ length: 10 }).map((_, i) => (
+        <Skeleton
+          key={i}
+          // w={{ base: 300, md: 700 }}
+          // h={{ base: 125, md: 140 }}
+          height='162px'
+          w='900px'
+        />
+      ))}
+    </>
   )
 }
