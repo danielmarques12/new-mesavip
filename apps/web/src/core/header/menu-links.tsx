@@ -1,6 +1,5 @@
 import {
   Box,
-  Link as ChakraLink,
   Flex,
   FlexProps,
   Image,
@@ -95,39 +94,35 @@ const MenuButton = ({ children, href, onClick }: MenuButtonProps) => {
   const { toggle } = useHeaderCtx()
 
   return (
-    <Link href={href} passHref>
-      <ChakraLink _hover={{ outline: 'none' }} onClick={toggle}>
-        <Flex
-          alignItems='center'
-          w='32'
-          h='12'
-          onClick={onClick}
-          color='gray.500'
-          _hover={{ bg: { base: '', md: 'gray.100' } }}
-          textAlign='center'
-          rounded='lg'
+    <Link href={href} passHref style={{ outline: 'none' }} onClick={toggle}>
+      <Flex
+        alignItems='center'
+        w='32'
+        h='12'
+        onClick={onClick}
+        color='gray.500'
+        _hover={{ bg: { base: '', md: 'gray.100' } }}
+        textAlign='center'
+        rounded='lg'
+      >
+        <Text
+          fontWeight='500'
+          _hover={{ textDecor: { base: 'underline', md: 'unset' } }}
+          mx='auto'
         >
-          <Text
-            fontWeight='500'
-            _hover={{ textDecor: { base: 'underline', md: 'unset' } }}
-            mx='auto'
-          >
-            {children}
-          </Text>
-        </Flex>
-      </ChakraLink>
+          {children}
+        </Text>
+      </Flex>
     </Link>
   )
 }
 
-const MenuItem = ({ children, href, ...rest }: LinkProps) => {
+const MenuItem = ({ children, href }: LinkProps) => {
   const { toggle } = useHeaderCtx()
 
   return (
-    <Link href={href!} passHref>
-      <ChakraLink _focus={{ outline: 'none' }} onClick={toggle} {...rest}>
-        {children}
-      </ChakraLink>
+    <Link href={href!} passHref style={{ outline: 'none' }} onClick={toggle}>
+      {children}
     </Link>
   )
 }
