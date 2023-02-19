@@ -1,54 +1,13 @@
-import {
-  Box,
-  Flex,
-  FlexProps,
-  Image,
-  LinkProps,
-  Stack,
-  StackProps,
-  Text,
-  TextProps,
-} from '@chakra-ui/react'
+import { Box, Flex, Stack, Text, TextProps } from '@chakra-ui/react'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { FaGithub } from 'react-icons/fa'
 
 import { useHeaderCtx } from '.'
 
-export const MenuLinks = () => {
+export const HeaderMenu = () => {
+  const { isOpen, toggle } = useHeaderCtx()
   const { status } = useSession()
-
-  return (
-    <MenuLinksContainer>
-      <MenuItem
-        href='https://github.com/danielmarques12/mesavip'
-        target='_blank'
-        rel='noreferrer'
-      >
-        <FaGithub size='25' />
-      </MenuItem>
-
-      <MenuButton href='/home'>Restaurants</MenuButton>
-
-      {status === 'authenticated' ? (
-        <ButtonsContainer>
-          <MenuButton href='/reservations'>Reservations</MenuButton>
-          <MenuButton href='/home' onClick={() => signOut()}>
-            Sign out
-          </MenuButton>
-        </ButtonsContainer>
-      ) : (
-        <ButtonsContainer>
-          <MenuButton href='/signin'>Sign in</MenuButton>
-          <MenuButton href='/signup'>Sign up</MenuButton>
-        </ButtonsContainer>
-      )}
-    </MenuLinksContainer>
-  )
-}
-
-const MenuLinksContainer = ({ children }: StackProps) => {
-  const { isOpen } = useHeaderCtx()
 
   return (
     <Box
@@ -66,23 +25,42 @@ const MenuLinksContainer = ({ children }: StackProps) => {
         justify={{ base: 'center', md: 'flex-end' }}
         pt={{ base: 4, md: 0 }}
       >
-        {children}
+        <Link
+          href='https://github.com/danielmarques12/mesavip'
+          target='_blank'
+          rel='noreferrer'
+          passHref
+          style={{ outline: 'none' }}
+          onClick={toggle}
+        >
+          <FaGithub size='25' />
+        </Link>
+
+        <MenuButton href='/home'>Restaurants</MenuButton>
+
+        <Flex
+          gridGap={{ base: '2', md: '4' }}
+          direction={{
+            base: 'column',
+            md: 'row',
+          }}
+        >
+          {status === 'authenticated' ? (
+            <>
+              <MenuButton href='/reservations'>Reservations</MenuButton>
+              <MenuButton href='/home' onClick={() => signOut()}>
+                Sign out
+              </MenuButton>
+            </>
+          ) : (
+            <>
+              <MenuButton href='/signin'>Sign in</MenuButton>
+              <MenuButton href='/signup'>Sign up</MenuButton>
+            </>
+          )}
+        </Flex>
       </Stack>
     </Box>
-  )
-}
-
-const ButtonsContainer = ({ children }: FlexProps) => {
-  return (
-    <Flex
-      gridGap={{ base: '2', md: '4' }}
-      direction={{
-        base: 'column',
-        md: 'row',
-      }}
-    >
-      {children}
-    </Flex>
   )
 }
 
@@ -116,19 +94,3 @@ const MenuButton = ({ children, href, onClick }: MenuButtonProps) => {
     </Link>
   )
 }
-
-const MenuItem = ({ children, href }: LinkProps) => {
-  const { toggle } = useHeaderCtx()
-
-  return (
-    <Link href={href!} passHref style={{ outline: 'none' }} onClick={toggle}>
-      {children}
-    </Link>
-  )
-}
-
-export const Logo = () => (
-  <MenuItem href='/home'>
-    <Image w='40' h='20' src='https://bit.ly/2YFsIhw' alt='Mesavip logo' />
-  </MenuItem>
-)

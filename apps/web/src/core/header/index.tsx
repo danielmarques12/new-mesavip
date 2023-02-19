@@ -1,8 +1,9 @@
-import { Box, Flex, useDisclosure } from '@chakra-ui/react'
+import { Box, Flex, Image, useDisclosure } from '@chakra-ui/react'
+import Link from 'next/link'
 import { createContext, useContext } from 'react'
 import { FaBars, FaTimes } from 'react-icons/fa'
 
-import { Logo, MenuLinks } from './menu-links'
+import { HeaderMenu } from './menu-links'
 
 type HeaderContextData = {
   toggle: () => void
@@ -29,9 +30,24 @@ export const Header = () => {
       >
         <Logo />
         <ToggleMenu />
-        <MenuLinks />
+        <HeaderMenu />
       </Flex>
     </HeaderContext.Provider>
+  )
+}
+
+const Logo = () => {
+  const { toggle } = useHeaderCtx()
+
+  return (
+    <Link
+      href='/restaurants'
+      passHref
+      style={{ outline: 'none' }}
+      onClick={toggle}
+    >
+      <Image w='40' h='20' src='https://bit.ly/2YFsIhw' alt='Mesavip logo' />
+    </Link>
   )
 }
 
