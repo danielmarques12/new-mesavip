@@ -1,6 +1,6 @@
 // src/utils/trpc.ts
-import type { AppRouter } from '@mesavip/api'
-import { transformer } from '@mesavip/api/transformer'
+import type { AppRouter } from '@poneglyph/api'
+import { transformer } from '@poneglyph/api/transformer'
 import { httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCNext } from '@trpc/next'
 import { inferRouterInputs, inferRouterOutputs } from '@trpc/server'

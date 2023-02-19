@@ -1,4 +1,4 @@
 /** @type {import("tailwindcss").Config} */
 module.exports = {
-  presets: [require('@mesavip/tailwind-config')],
+  presets: [require('@poneglyph/tailwind-config')],
 }

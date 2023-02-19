@@ -1,4 +1,4 @@
-import { prisma } from '@mesavip/db'
+import { prisma } from '@poneglyph/db'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { type NextAuthOptions } from 'next-auth'
 import DiscordProvider from 'next-auth/providers/discord'

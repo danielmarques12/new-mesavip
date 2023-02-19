@@ -1,1 +1,1 @@
-module.exports = require('@mesavip/tailwind-config/postcss')
+module.exports = require('@poneglyph/tailwind-config/postcss')

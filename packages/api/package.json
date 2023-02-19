@@ -1,5 +1,5 @@
 {
-  "name": "@mesavip/api",
+  "name": "@poneglyph/api",
   "version": "0.1.0",
   "main": "./index.ts",
   "types": "./index.ts",
@@ -10,8 +10,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@mesavip/auth": "*",
-    "@mesavip/db": "*",
+    "@poneglyph/auth": "*",
+    "@poneglyph/db": "*",
     "@trpc/client": "^10.8.1",
     "@trpc/server": "^10.8.1",
     "superjson": "1.9.1",

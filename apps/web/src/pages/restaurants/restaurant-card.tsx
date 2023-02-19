@@ -1,5 +1,5 @@
 import { Box, Flex, Heading, Image, Stack, Text } from '@chakra-ui/react'
-import type { Restaurant } from '@mesavip/api/src/router/restaurant'
+import type { Restaurant } from '@poneglyph/api/src/router/restaurant'
 import { useReviewScore } from 'hooks/use-review-score'
 import NextImage from 'next/image'
 import Link from 'next/link'

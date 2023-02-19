@@ -49,7 +49,7 @@ export default function SignInPage({
   return (
     <div className='min-h-screen'>
       <div className='flex min-h-screen flex-col items-center justify-center space-y-8 py-12 sm:px-6 lg:space-y-12 lg:px-8'>
-        <Image src='/logo.svg' alt='Mesavip logo' width={100} height={49} />
+        <Image src='/logo.svg' alt='Poneglyph logo' width={100} height={49} />
 
         <div
           aria-label='Sign in form'

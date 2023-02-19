@@ -1,5 +1,5 @@
 {
-  "name": "@mesavip/web",
+  "name": "@poneglyph/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,10 +14,10 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@js-temporal/polyfill": "^0.4.3",
-    "@mesavip/api": "*",
-    "@mesavip/auth": "*",
-    "@mesavip/db": "*",
-    "@mesavip/tailwind-config": "*",
+    "@poneglyph/api": "*",
+    "@poneglyph/auth": "*",
+    "@poneglyph/db": "*",
+    "@poneglyph/tailwind-config": "*",
     "@next/font": "^13.1.0",
     "@tanstack/react-query": "^4.20.4",
     "@trpc/client": "^10.8.1",

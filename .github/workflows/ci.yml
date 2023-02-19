@@ -52,8 +52,7 @@ jobs:
           path: ${{ github.workspace }}apps/nextjs/.next/cache
           key: ${{ runner.os }}-${{ runner.node }}-${{ hashFiles('**/pnpm-lock.yaml') }}-nextjs
 
-      # Normally, this would be done as part of the turbo pipeline - however since the Expo app doesn't depend on `@mesavip/db` it doesn't care.
-      # TODO: Free for all to find a better solution here.
+      # Normally, this would be done as part of the turbo pipeline - however since the Expo app doesn't depend on `@poneglyph/db` it doesn't care.
       - name: Generate Prisma Client
         run: pnpm turbo db:generate
 

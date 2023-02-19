@@ -11,7 +11,7 @@ const config = {
   swcMinify: true,
   experimental: {
     // Enables hot-reload and easy integration for local packages
-    transpilePackages: ['@mesavip/api', '@mesavip/auth', '@mesavip/db'],
+    transpilePackages: ['@poneglyph/api', '@poneglyph/auth', '@poneglyph/db'],
   },
   // We already do linting on GH actions
   eslint: {

@@ -1,5 +1,5 @@
-import { type Session, getServerSession } from '@mesavip/auth'
-import { prisma } from '@mesavip/db'
+import { type Session, getServerSession } from '@poneglyph/auth'
+import { prisma } from '@poneglyph/db'
 import { type inferAsyncReturnType } from '@trpc/server'
 import { type CreateNextContextOptions } from '@trpc/server/adapters/next'
 

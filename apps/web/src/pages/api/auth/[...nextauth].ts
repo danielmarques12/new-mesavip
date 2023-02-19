@@ -1,4 +1,4 @@
-import { authOptions } from '@mesavip/auth'
+import { authOptions } from '@poneglyph/auth'
 import NextAuth from 'next-auth'
 
 export default NextAuth(authOptions)

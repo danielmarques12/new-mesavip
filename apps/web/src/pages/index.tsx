@@ -1,4 +1,4 @@
-import { Address, Reservation, Restaurant, prisma } from '@mesavip/db'
+import { Address, Reservation, Restaurant, prisma } from '@poneglyph/db'
 import type { GetServerSideProps } from 'next'
 import { signIn, signOut } from 'next-auth/react'
 import Head from 'next/head'

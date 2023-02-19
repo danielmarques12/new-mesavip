@@ -1,5 +1,5 @@
 import { Box, Flex, Skeleton, Stack } from '@chakra-ui/react'
-import { prisma } from '@mesavip/db'
+import { prisma } from '@poneglyph/db'
 import { GetServerSideProps } from 'next'
 import { useMemo } from 'react'
 import { trpc } from 'utils/trpc'

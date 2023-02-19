@@ -53,7 +53,7 @@ const Logo = () => {
       style={{ outline: 'none' }}
       onClick={toggle}
     >
-      <Image w='40' h='20' src='https://bit.ly/2YFsIhw' alt='Mesavip logo' />
+      <Image w='40' h='20' src='https://bit.ly/2YFsIhw' alt='poneglyph logo' />
     </Link>
   )
 }

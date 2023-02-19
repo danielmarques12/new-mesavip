@@ -9,15 +9,15 @@
   },
   "tasks": [
     {
-      "label": "Launch Mesavip Development terminals",
-      "dependsOn": ["mesavip", "Prisma Studio(5555)"],
+      "label": "Launch Poneglyph Development terminals",
+      "dependsOn": ["poneglyph", "Prisma Studio(5555)"],
       "group": {
         "kind": "build",
         "isDefault": true
       }
     },
     {
-      "label": "mesavip",
+      "label": "poneglyph",
       "type": "shell",
       "command": "pnpm dev",
       "isBackground": false,
