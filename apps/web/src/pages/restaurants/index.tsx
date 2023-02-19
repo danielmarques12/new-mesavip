@@ -1,5 +1,6 @@
 import { Box, Flex, Skeleton, Stack } from '@chakra-ui/react'
 import { prisma } from '@poneglyph/db'
+import { Header } from 'core/header'
 import { GetServerSideProps } from 'next'
 import { useMemo } from 'react'
 import { trpc } from 'utils/trpc'
@@ -51,25 +52,29 @@ export default function Restaurants({ cuisines }: { cuisines: Cuisine[] }) {
   )
 
   return (
-    <Box bg={{ base: 'inherit', md: 'gray.50' }} minHeight='100vh'>
-      <Box px={{ base: '6', md: '24' }} pt='8'>
-        <Stack spacing={6}>
-          <Flex gridGap='12' mx='auto'>
-            <Filters />
+    <>
+      <Header />
 
-            <Stack spacing={4}>
-              {data ? (
-                data?.restaurants.map((restaurant, index) => (
-                  <RestaurantCard key={index} restaurant={restaurant} />
-                ))
-              ) : (
-                <RestaurantCardsSkeleton />
-              )}
-            </Stack>
-          </Flex>
-        </Stack>
+      <Box bg={{ base: 'inherit', md: 'gray.50' }} minHeight='100vh'>
+        <Box px={{ base: '6', md: '24' }} pt='8'>
+          <Stack spacing={6}>
+            <Flex gridGap='12' mx='auto'>
+              <Filters />
+
+              <Stack spacing={4}>
+                {data ? (
+                  data?.restaurants.map((restaurant, index) => (
+                    <RestaurantCard key={index} restaurant={restaurant} />
+                  ))
+                ) : (
+                  <RestaurantCardsSkeleton />
+                )}
+              </Stack>
+            </Flex>
+          </Stack>
+        </Box>
       </Box>
-    </Box>
+    </>
   )
 }
 

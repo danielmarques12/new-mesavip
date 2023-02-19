@@ -61,8 +61,6 @@ export default function SignInPage({
             {error ? <AuthError error={error} /> : null}
 
             {providers ? <ProvidersList providers={providers} /> : null}
-
-            <SigninTermsAndPolicy />
           </div>
         </div>
       </div>
@@ -103,12 +101,4 @@ const SignInButton = ({ provider }: { provider: ClientSafeProvider }) => (
     {providersIcons[provider.name]}
     <span>{provider.name}</span>
   </div>
-)
-
-const SigninTermsAndPolicy = () => (
-  <span className='mx-auto w-72 text-center text-sm text-gray-400'>
-    By signing in, you agree to our{' '}
-    <span className='cursor-pointer text-pink-400'>Terms of service</span> and{' '}
-    <span className='cursor-pointer text-pink-400'>Privacy Policy</span>
-  </span>
 )
