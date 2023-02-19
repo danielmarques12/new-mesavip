@@ -1,11 +1,78 @@
-import { Box, Flex, Stack, Text, TextProps } from '@chakra-ui/react'
+import {
+  Box,
+  Flex,
+  Image,
+  Stack,
+  Text,
+  TextProps,
+  useDisclosure,
+} from '@chakra-ui/react'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { FaGithub } from 'react-icons/fa'
+import { createContext, useContext } from 'react'
+import { FaBars, FaGithub, FaTimes } from 'react-icons/fa'
 
-import { useHeaderCtx } from '.'
+type HeaderContextData = {
+  toggle: () => void
+  isOpen: boolean
+}
 
-export const HeaderMenu = () => {
+const HeaderContext = createContext({} as HeaderContextData)
+const useHeaderCtx = () => useContext(HeaderContext)
+
+export const Header = () => {
+  const { isOpen, onToggle: toggle } = useDisclosure()
+
+  return (
+    <HeaderContext.Provider value={{ toggle, isOpen }}>
+      <Flex
+        as='nav'
+        align='center'
+        justify='space-between'
+        wrap='wrap'
+        w='100%'
+        px='3'
+        bg='white'
+        borderBottom='1px solid #f0f2f5'
+      >
+        <Logo />
+        <ToggleMenu />
+        <HeaderMenu />
+      </Flex>
+    </HeaderContext.Provider>
+  )
+}
+
+const Logo = () => {
+  const { toggle } = useHeaderCtx()
+
+  return (
+    <Link
+      href='/restaurants'
+      passHref
+      style={{ outline: 'none' }}
+      onClick={toggle}
+    >
+      <Image w='40' h='20' src='https://bit.ly/2YFsIhw' alt='Mesavip logo' />
+    </Link>
+  )
+}
+
+const ToggleMenu = () => {
+  const { toggle, isOpen } = useHeaderCtx()
+
+  return (
+    <Box
+      display={{ base: 'block', md: 'none' }}
+      onClick={toggle}
+      cursor='pointer'
+    >
+      {isOpen ? <FaTimes /> : <FaBars />}
+    </Box>
+  )
+}
+
+const HeaderMenu = () => {
   const { isOpen, toggle } = useHeaderCtx()
   const { status } = useSession()
 
@@ -26,7 +93,7 @@ export const HeaderMenu = () => {
         pt={{ base: 4, md: 0 }}
       >
         <Link
-          href='https://github.com/danielmarques12/mesavip'
+          href='https://github.com/danielmarques12/poneglyph'
           target='_blank'
           rel='noreferrer'
           passHref
