@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  db:
+    volumes:
+      - ./docker/postgres:/docker-entrypoint-initdb.d
+    build: ./docker/postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_MULTIPLE_DATABASES="poneglyph","poneglyph-shadow"
+    ports:
+      - '5432:5432'
